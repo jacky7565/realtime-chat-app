@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "start": "concurrently \"npm run dev --prefix my-app\" \"npm run dev --prefix sysadmin\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

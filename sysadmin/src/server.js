@@ -17,7 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('assets/uploads'));
 
 let corsObj = {
-  origin: "http://localhost:5173",
+  // origin: "http://localhost:5173",
+  origin: "https://realtime-chat-8mc17k0ok-jacky-yadavs-projects.vercel.app",
   methods: ["GET", "POST", "DELETE", "PUT"],
   credentials: true
 }
@@ -65,7 +66,7 @@ io.on("connection", (socket) => {
     }
 
   })
-  
+
   socket.on("startTyping",({senderId,receiverId})=>{
     const receiverSocketId=onlineUsers.get(receiverId)
     if(receiverSocketId){

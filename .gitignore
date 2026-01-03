@@ -1,0 +1,6 @@
+node_modules
+my-app/node_modules
+sysadmin/node_modules
+.env
+sysadmin/.env
+my-app/.env

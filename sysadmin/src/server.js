@@ -36,7 +36,7 @@ let apiRateLimiter = {
   },
 };
 const limiter = rateLimit(apiRateLimiter);
-app.use(limiter);
+// app.use(limiter);
 app.use("/api", userRoutes);
 
 const server = http.createServer(app);

@@ -10,20 +10,22 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 
 import { AuthProvider } from "./components/AuthContext";
 
-function App() {  
+import ProtectedRouter from "./components/ProtectedRouter";
+
+function App() {
 
   return (
-    <AuthProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/"     element={<TodoItem />} />
-        <Route path="/list" element={<UserList/>} />
-         <Route path="/login" element={<Login/>} />
-        <Route path="/form" element={<Form />} />
-         <Route path="/chat" element={<ChatApp />} />
-      </Routes>
-    </BrowserRouter>
-    </AuthProvider>
+
+    <Routes>
+      <Route path="/" element={<ProtectedRouter><ChatApp /></ProtectedRouter>} />
+
+      <Route path="/user" element={<UserList />} />
+      <Route path="/todo" element={<TodoItem />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/form" element={<Form />} />
+      <Route path="/chat" element={<ProtectedRouter><ChatApp /></ProtectedRouter>} />
+    </Routes>
+
   );
 }
 

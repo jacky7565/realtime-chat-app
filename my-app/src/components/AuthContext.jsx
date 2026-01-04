@@ -6,6 +6,7 @@ const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
     const [userData, setUserData] = useState(null)
+    const [loading, setLoading] = useState(true);
     let API = import.meta.env.VITE_API_BASE_URL;
     useEffect(() => {
         const fetchUser = async () => {
@@ -15,14 +16,18 @@ export const AuthProvider = ({ children }) => {
                 setUserData(userData.data.data)
             }
             catch (error) {
+                 setUserData(null);
                 console.log(error)
+            }
+            finally{
+                setLoading(false);
             }
         }
         fetchUser()
 
     }, [])
     return (
-        <AuthContext.Provider value={{ userData }}>
+        <AuthContext.Provider value={{ userData,loading}}>
             {children}
         </AuthContext.Provider>
     )

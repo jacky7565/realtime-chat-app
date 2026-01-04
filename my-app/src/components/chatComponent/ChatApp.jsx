@@ -27,7 +27,7 @@ export default function ChatApp() {
 
     useEffect(() => {
         socket.on("getOnlineUsers", (users) => {
-            console.log("onlineUsers from socket:", users);
+            // console.log("onlineUsers from socket:", users);
             setOnlineUsers(users);
         });
 
@@ -86,6 +86,7 @@ export default function ChatApp() {
         try {
             let fetchData = await axios.get(`${USERAPI}/fetch`, { withCredentials: true });
             if (!fetchData.data.success) {
+
                 toast.error(fetchData.data.message)
                 return
             }
@@ -120,6 +121,11 @@ export default function ChatApp() {
 
     const handleSend = async () => {
 
+        sendMessageSubmit()
+
+    }
+
+    async function sendMessageSubmit() {
         if (!activeUserId || !sendMessage) return
 
         socket.emit("sendMessage", {
@@ -142,7 +148,6 @@ export default function ChatApp() {
         catch (error) {
             console.log(error)
         }
-
     }
 
 
@@ -178,28 +183,7 @@ export default function ChatApp() {
 
     let hanleKeyDown = async (e) => {
         if (e.key == "Enter" && !e.shiftKey) {
-            if (!activeUserId || !sendMessage) return
-
-            socket.emit("sendMessage", {
-                senderId: loggedInUserId,
-                receiverId: activeUserId,
-                message: sendMessage
-            });
-
-            try {
-                let body = {
-                    receiverId: activeUserId,
-                    message: sendMessage
-                };
-                let conversation = await axios.post(`${USERAPI}/insert-chat`, body, { withCredentials: true })
-
-                setSendMessage("")
-                selectUserHandlear(activeUserId)
-
-            }
-            catch (error) {
-                console.log(error)
-            }
+            sendMessageSubmit()
         }
 
     }
@@ -296,8 +280,18 @@ export default function ChatApp() {
                                 value={sendMessage}
                                 onChange={handleTyping}
                                 onKeyDown={hanleKeyDown}
-                                className=" px-4 pt-5 focus:outline-none  w-full resize-none border rounded-full"
-                            />
+                                className="w-full 
+                                        px-4 
+                                        py-3
+                                        resize-none
+                                        overflow-y-auto
+                                        border 
+                                        rounded-2xl
+                                        focus:outline-none
+                                        text-sm
+                                        leading-5
+                                        max-h-32
+                                        " />
                             <button className="bg-indigo-600 text-white px-4 py-2 rounded-full" onClick={handleSend}>Send</button>
                         </div>
                     </main>

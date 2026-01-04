@@ -106,7 +106,7 @@ let Login = () => {
 
         <p className="text-center text-gray-600 text-sm mt-4">
           Don't have an account?
-          <a href="#" className="text-blue-600 font-medium hover:underline">
+          <a href="/form" className="text-blue-600 font-medium hover:underline">
             Register
           </a>
         </p>

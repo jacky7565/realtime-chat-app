@@ -2,10 +2,13 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { userAuth } from "../components/AuthContext";
+
 
 let Login = () => {
   let [error, setError] = useState({});
   let navigate = useNavigate();
+  let { setUserData } = userAuth();
 
   let [inValue, setInValue] = useState({ email: "", password: "" });
   let handleChange = (e) => {
@@ -36,6 +39,7 @@ let Login = () => {
       if (loginSubmit.data.success == true) {
         toast.success(loginSubmit.data.message);
         setInValue({ email: "", password: "" });
+setUserData(loginSubmit.data.user);
        navigate("/chat", { replace: true });
       } else {
         toast.error(loginSubmit.data.message);

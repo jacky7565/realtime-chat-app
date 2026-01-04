@@ -36,7 +36,7 @@ let Login = () => {
       if (loginSubmit.data.success == true) {
         toast.success(loginSubmit.data.message);
         setInValue({ email: "", password: "" });
-        navigate("/chat");
+       navigate("/chat", { replace: true });
       } else {
         toast.error(loginSubmit.data.message);
       }

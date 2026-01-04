@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { userAuth } from "../components/AuthContext";
 
-
 let Login = () => {
   let [error, setError] = useState({});
   let navigate = useNavigate();
@@ -33,14 +32,15 @@ let Login = () => {
     if (errorCheck != 0) return;
     try {
       let loginSubmit = await axios.post(`${API}/login`, inValue, {
-        withCredentials: true,
+        withCredentials: true
       });
 
       if (loginSubmit.data.success == true) {
         toast.success(loginSubmit.data.message);
         setInValue({ email: "", password: "" });
-setUserData(loginSubmit.data.user);
-       navigate("/chat", { replace: true });
+        setUserData(loginSubmit.data.user);
+        navigate("/chat", { replace: true });
+
       } else {
         toast.error(loginSubmit.data.message);
       }

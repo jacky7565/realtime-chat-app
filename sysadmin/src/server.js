@@ -18,7 +18,7 @@ app.use('/uploads', express.static('assets/uploads'));
 
 let corsObj = {
   // origin: "http://localhost:5173",
-  origin: "https://realtime-chat-app-omega.vercel.app/",
+  origin: process.env.FRONTEND_URL,
 
 
   methods: ["GET", "POST", "DELETE", "PUT"],

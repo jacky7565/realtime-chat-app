@@ -5,6 +5,7 @@ import { ChatPageSkeleton } from "./ChatPageSkeleton";
 import { userAuth } from "../AuthContext";
 import { io } from "socket.io-client";
 import { socket } from "../../socket";
+import { ArrowLeft } from "lucide-react";
 
 export default function ChatApp() {
 
@@ -193,110 +194,148 @@ export default function ChatApp() {
             {pageLoading ? (
                 <ChatPageSkeleton />
             ) : (
-                <div className="h-screen flex bg-slate-100">
-                    {/* Sidebar */}
-                    <aside className="w-80 bg-white border-r flex flex-col">
-                        <div className="p-4 border-b text-lg font-semibold">My Chat</div>
+                <div className="h-screen flex bg-slate-100 overflow-hidden">
+
+                    {/* ================= SIDEBAR ================= */}
+                    <aside
+                        className={`
+                        bg-white border-r flex flex-col
+                        w-full md:w-80
+                        ${activeUserId ? "hidden md:flex" : "flex"}
+                        `}
+                    >
+                        <div className="p-4 border-b text-lg font-semibold">
+                            My Chat
+                        </div>
+
                         <div className="flex-1 overflow-y-auto">
-                            {userList.map((user, i) => {
+                            {userList.map((user) => {
                                 const isOnline = onlineUsers?.includes(user._id);
+
                                 return (
                                     <div
-                                        onClick={() => selectUserHandlear(user._id)}
                                         key={user._id}
-                                        className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-slate-100 ${i === 0 && 'bg-slate-100'}`}
+                                        onClick={() => selectUserHandlear(user._id)}
+                                        className="flex items-center gap-3 p-3 md:p-4 cursor-pointer hover:bg-slate-100"
                                     >
                                         <div className="relative">
                                             <img
                                                 src={`${baseUrl}uploads/${user.image}`}
                                                 onError={(e) => (e.target.src = "/profile-default.png")}
-                                                alt="avatar"
                                                 className="w-10 h-10 rounded-full object-cover"
                                             />
-                                            {
-                                                isOnline && <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white"></span>}
+                                            {isOnline && (
+                                                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                                            )}
                                         </div>
-                                        <div className="flex-1">
-                                            <p className="font-medium">{user.name.charAt(0).toUpperCase()}{user.name.slice(1)}</p>
-                                            <p className="text-sm text-gray-500 truncate">Last message preview...</p>
+
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-medium truncate">
+                                                {user.name.charAt(0).toUpperCase() + user.name.slice(1)}
+                                            </p>
+                                            <p className="text-sm text-gray-500 truncate">
+                                                Last message preview...
+                                            </p>
                                         </div>
                                     </div>
-                                )
-                            }
-                            )}
+                                );
+                            })}
                         </div>
                     </aside>
 
-                    {/* Chat Area */}
-                    {activeUserId && <main className="flex-1 flex flex-col">
-                        {/* Header */}
-                        <div className="p-4 bg-white border-b flex items-center gap-3">
-                            <img src={`${baseUrl}uploads/${activeUserDetail.image}`} onError={(e) => (e.target.src = "/profile-default.png")} className=" w-10 h-10 rounded-full object-cover" />
-                            <div>
-                                <p className="font-semibold">
-                                    {activeUserDetail?.name &&
-                                        activeUserDetail.name.charAt(0).toUpperCase() +
-                                        activeUserDetail.name.slice(1)
-                                    }
-                                </p><span className="text-sm text-green-500">{onlineUsers.includes(activeUserDetail._id) ? 'Online' : ''}</span>
+                    
+                    {activeUserId && (
+                        <main className="flex-1 flex flex-col bg-slate-100">
+
+                            
+                            <div className="p-3 md:p-4 bg-white border-b flex items-center gap-3">
+                                <button
+                                    onClick={() => setActiveUserId(null)}
+                                    className="md:hidden text-xl text-gray-600"
+                                >
+                                    <ArrowLeft className="cursor-pointer w-6 h-6"/>
+                                </button>
+
+                                <img
+                                    src={`${baseUrl}uploads/${activeUserDetail.image}`}
+                                    onError={(e) => (e.target.src = "/profile-default.png")}
+                                    className="w-10 h-10 rounded-full object-cover"
+                                />
+
+                                <div>
+                                    <p className="font-semibold">
+                                        {activeUserDetail?.name?.charAt(0).toUpperCase() +
+                                            activeUserDetail?.name?.slice(1)}
+                                    </p>
+                                    <span className="text-xs text-green-500">
+                                        {onlineUsers.includes(activeUserDetail._id) ? "Online" : ""}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Messages */}
-                        <div className="flex-1 p-4 overflow-y-auto space-y-3" ref={chatContainerRef}>
-                            {conversation.map((msg) => {
-                                const isSender = msg.senderId === loggedInUserId
+                          
+                            <div
+                                className="flex-1 p-3 md:p-4 overflow-y-auto space-y-3"
+                                ref={chatContainerRef}
+                            >
+                                {conversation.map((msg) => {
+                                    const isSender = msg.senderId === loggedInUserId;
 
-                                return (
-                                    <div
-                                        key={msg._id}
-                                        className={`max-w-xs p-3 rounded-lg shadow 
-                                                ${isSender
-                                                ? "ml-auto bg-indigo-600 text-white"
-                                                : "bg-white text-black"
-                                            }`}
-                                    >
-                                        {msg.message}
-                                    </div>
-                                )
-                            })}
-                            <div ref={chatEndRef} />
-                        </div>
+                                    return (
+                                        <div
+                                            key={msg._id}
+                                            className={`
+                                            p-3 rounded-2xl shadow text-sm
+                                            max-w-[85%] md:max-w-xs
+                                            ${isSender
+                                                    ? "ml-auto bg-indigo-600 text-white"
+                                                    : "bg-white text-black"}
+                                            `}
+                                        >
+                                            {msg.message}
+                                        </div>
+                                    );
+                                })}
+                                <div ref={chatEndRef} />
+                            </div>
 
+                           
+                            {startTyping && (
+                                <div className="px-4 text-sm text-gray-500">
+                                    Typing...
+                                </div>
+                            )}
 
+                           
+                            <div className="p-2 md:p-4 bg-white border-t flex items-end gap-2">
+                                <textarea
+                                    placeholder="Type a message..."
+                                    value={sendMessage}
+                                    onChange={handleTyping}
+                                    onKeyDown={hanleKeyDown}
+                                    rows={1}
+                                    className="flex-1
+                                            px-4 py-3
+                                            resize-none
+                                            border
+                                            rounded-2xl
+                                            focus:outline-none
+                                            text-sm
+                                            max-h-32
+                                            overflow-y-auto" />
 
+                                <button
+                                    onClick={handleSend}
+                                    className="bg-indigo-600 text-white px-4 py-2 rounded-full"
+                                >
+                                    Send
+                                </button>
+                            </div>
 
-                        {/* Typing */}
-                        {startTyping && (<div className="px-4 text-sm text-gray-500">
-                            {/* {activeUserDetail.name?.charAt(0).toUpperCase() + activeUserDetail.name?.slice(1)}  */}
-                            Typing...</div>)}
-
-                        {/* Input */}
-                        <div className="p-4 bg-white border-t flex items-center gap-2">
-                            <textarea
-                                type="text"
-                                placeholder="Type a message..."
-                                name="message"
-                                value={sendMessage}
-                                onChange={handleTyping}
-                                onKeyDown={hanleKeyDown}
-                                className="w-full 
-                                        px-4 
-                                        py-3
-                                        resize-none
-                                        overflow-y-auto
-                                        border 
-                                        rounded-2xl
-                                        focus:outline-none
-                                        text-sm
-                                        leading-5
-                                        max-h-32
-                                        " />
-                            <button className="bg-indigo-600 text-white px-4 py-2 rounded-full" onClick={handleSend}>Send</button>
-                        </div>
-                    </main>
-                    }
+                        </main>
+                    )}
                 </div>
+
 
             )}
 
